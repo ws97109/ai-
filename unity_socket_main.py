@@ -137,7 +137,7 @@ class agent_v:
         self.wake = ""
         self.curr_action = ""
         self.curr_action_pronunciatio  = ""
-        self.ziliao = open(f"中國小鎮原始檔/agents/{self.name}/1.txt",encoding="utf-8").readlines()
+        self.ziliao = open(f"ai小鎮原始檔/agents/{self.name}/1.txt",encoding="utf-8").readlines()
 
     def agent_init(self,home):
         agent = agent_v(self.name, MAP_plus)
