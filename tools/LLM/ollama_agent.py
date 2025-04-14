@@ -2,7 +2,7 @@ import json
 import time
 import requests
 import warnings
-
+import os
 
 
 warnings.filterwarnings('ignore')
@@ -73,19 +73,28 @@ class OllamaAgent:
         RETURNS:
           a str prompt that will be sent to OpenAI's GPT server.
         """
-        if type(curr_input) == type("string"):
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        prompt_path = os.path.join(base_dir, "prompt_template", "生成日程安排时间表.txt")
+        # 正確讀檔
+        with open(prompt_path, "r", encoding="utf-8") as f:
+            prompt = f.read()
+
+        # 如果只給一段 input，也轉成 list
+        if isinstance(curr_input, str):
             curr_input = [curr_input]
+
+        # 確保都是 str
         curr_input = [str(i) for i in curr_input]
 
-        f = open(prompt_lib_file, "r",encoding="utf-8")
-        prompt = f.read()
-        f.close()
+        # 替換所有 !<INPUT 0>!、!<INPUT 1>! 等
         for count, i in enumerate(curr_input):
             prompt = prompt.replace(f"!<INPUT {count}>!", i)
+
+        # 處理特殊 comment block 分隔符（可選）
         if "<commentblockmarker>###</commentblockmarker>" in prompt:
             prompt = prompt.split("<commentblockmarker>###</commentblockmarker>")[1]
-        return prompt.strip()
 
+        return prompt.strip()
 
 
 
