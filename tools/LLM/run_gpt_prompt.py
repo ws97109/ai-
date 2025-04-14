@@ -9,7 +9,7 @@ os.chdir('../')
 # 方式一
 
 api_url = "http://127.0.0.1:11434/api"
-ollama_agent = OllamaAgent("llama3.1:8b", api_url, "agent_chat")
+ollama_agent = OllamaAgent("qwen2.5:7b", api_url, "agent_chat")
 
 
 # 方式二
@@ -58,7 +58,7 @@ def run_gpt_prompt_generate_hourly_schedule(persona,now_time):
 
     generate_prompt = OllamaAgent.generate_prompt(
         [persona,now_time],
-        r"./tools/LLM/prompt_template/生成日程安排时间表.txt")
+        r"ai小鎮原始檔/tools/LLM/prompt_template/生成日程安排时间表.txt")
     output = ollama_agent.ollama_safe_generate_response(generate_prompt, "", "你不需要调整，只需要给我输出一个最终的结果，我需要一个标准的数组格式", 5,
                                                         __func_validate, __func_clean_up)
     # print("run_gpt_prompt_generate_hourly_schedule",output)
@@ -92,21 +92,15 @@ def run_gpt_prompt_wake_up_hour(persona,now_time,hourly_schedule):
         return True
     generate_prompt = OllamaAgent.generate_prompt(
         [persona,now_time,hourly_schedule],
-        r"./tools/LLM/prompt_template/起床时间.txt")
+        r"ai小鎮原始檔/tools/LLM/prompt_template/起床时间.txt")
     output = ollama_agent.ollama_safe_generate_response(generate_prompt, "",
                                                         "只需要给我输出一个最终的结果不需要给我其他任何信息，我需要一个标准的日期格式，比如：07-01（表示早上七点零一分起床）",
                                                         3,
                                                         __func_validate, __func_clean_up)
-    if isinstance(output, str):
-        pattern = r'"output"\s*:\s*"([^"]+)"'
-        match = re.search(pattern, output)
-        if match:
-            output = match.group(1)
-        # 如果没有匹配成功，直接返回原始输出，可能导致错误
-    # 如果output不是字符串，直接返回，可能导致错误
-    
+    pattern = r'"output"\s*:\s*"([^"]+)"'
+    match = re.search(pattern, output)
+    output = match.group(1)
     return output
-
 
 # 行动转表情
 def run_gpt_prompt_pronunciatio(Action_dec):
@@ -134,7 +128,7 @@ def run_gpt_prompt_pronunciatio(Action_dec):
     special_instruction = "输出只包含表情符号"  ########
     generate_prompt = OllamaAgent.generate_prompt(
         [Action_dec],
-        r"./tools/LLM/prompt_template/行为转为图标显示.txt")
+        r"ai小鎮原始檔/tools/LLM/prompt_template/行为转为图标显示.txt")
     output = ollama_agent.ollama_safe_generate_response(generate_prompt, example_output, special_instruction, 5,__chat_func_validate,__chat_func_clean_up,'{"output":"😴💤"}')
     pattern = r'"output"\s*:\s*"([^"]+)"'
     match = re.search(pattern, output)
@@ -167,7 +161,7 @@ def double_agents_chat(maze,agent1_name,agent2_name,curr_context,init_summ_idea,
         return True
 
     generate_prompt = OllamaAgent.generate_prompt(
-        [maze,agent1_name, agent2_name, curr_context, init_summ_idea, target_summ_idea,now_time], r"./tools/LLM/prompt_template/聊天.txt")
+        [maze,agent1_name, agent2_name, curr_context, init_summ_idea, target_summ_idea,now_time], r"ai小鎮原始檔/tools/LLM/prompt_template/聊天.txt")
 
     example_output = '[["丹尼", "你好"], ["苏克", "你也是"] ... ]'
     special_instruction = '输出应该是一个列表类型，其中内部列表的形式为[“<名字>”，“<话语>”]。'
@@ -208,7 +202,7 @@ def go_map(agent_name, home , curr_place, can_go, curr_task):
 
     generate_prompt = OllamaAgent.generate_prompt(
         [agent_name,home , curr_place, can_go, curr_task],
-        r"./tools/LLM/prompt_template/行动需要去的地方.txt")
+        r"ai小鎮原始檔/tools/LLM/prompt_template/行动需要去的地方.txt")
 
     output = ollama_agent.ollama_safe_generate_response(generate_prompt, example_output, special_instruction, 3,__chat_func_validate,__chat_func_clean_up)
     pattern = r'"output"\s*:\s*"([^"]+)"'
@@ -238,7 +232,7 @@ def modify_schedule(old_schedule,now_time,memory,wake_time,role_xg):
 
     generate_prompt = OllamaAgent.generate_prompt(
         [old_schedule,now_time,memory,wake_time,role_xg],
-        r"./tools/LLM/prompt_template/细化每日安排时间表.txt")
+        r"ai小鎮原始檔/tools/LLM/prompt_template/细化每日安排时间表.txt")
     output = ollama_agent.ollama_safe_generate_response(generate_prompt, "", "你不需要调整，只需要给我输出一个最终的结果，我需要一个标准的数组格式", 10,
                                                         __func_validate, __func_clean_up)
     # print("modify_schedule",output)
@@ -271,7 +265,7 @@ def summarize(memory,now_time,name):
         return True
     generate_prompt = OllamaAgent.generate_prompt(
         [memory,now_time,name],
-        r"./tools/LLM/prompt_template/总结经历交谈为记忆.txt")
+        r"ai小鎮原始檔/tools/LLM/prompt_template/总结经历交谈为记忆.txt")
     example_output = ''
     special_instruction = ''
     output = ollama_agent.ollama_safe_generate_response(generate_prompt, example_output, special_instruction, 3,
