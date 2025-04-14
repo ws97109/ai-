@@ -5,11 +5,12 @@ from datetime import datetime, timedelta
 import gradio as gr
 import numpy as np
 from sklearn.cluster import DBSCAN
-from tools.LLM.run_gpt_prompt import *
 import os
 import socket
+import sys
 
-
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from tools.LLM.run_gpt_prompt import *
 
 def send_move_command(ip, port, object_positions):
     """
@@ -137,7 +138,10 @@ class agent_v:
         self.wake = ""
         self.curr_action = ""
         self.curr_action_pronunciatio  = ""
-        self.ziliao = open(f"./agents/{self.name}/1.txt",encoding="utf-8").readlines()
+        
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        file_path = os.path.join(base_dir, "agents", self.name, "1.txt")
+        self.ziliao = open(file_path, encoding="utf-8").readlines()
 
     def agent_init(self,home):
         agent = agent_v(self.name, MAP_plus)
