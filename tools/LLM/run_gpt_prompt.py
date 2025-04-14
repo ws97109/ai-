@@ -9,7 +9,7 @@ os.chdir('../')
 # 方式一
 
 api_url = "http://127.0.0.1:11434/api"
-ollama_agent = OllamaAgent("qwen2.5:14b", api_url, "agent_chat")
+ollama_agent = OllamaAgent("llama3.1:8b", api_url, "agent_chat")
 
 
 # 方式二
@@ -97,10 +97,16 @@ def run_gpt_prompt_wake_up_hour(persona,now_time,hourly_schedule):
                                                         "只需要给我输出一个最终的结果不需要给我其他任何信息，我需要一个标准的日期格式，比如：07-01（表示早上七点零一分起床）",
                                                         3,
                                                         __func_validate, __func_clean_up)
-    pattern = r'"output"\s*:\s*"([^"]+)"'
-    match = re.search(pattern, output)
-    output = match.group(1)
+    if isinstance(output, str):
+        pattern = r'"output"\s*:\s*"([^"]+)"'
+        match = re.search(pattern, output)
+        if match:
+            output = match.group(1)
+        # 如果没有匹配成功，直接返回原始输出，可能导致错误
+    # 如果output不是字符串，直接返回，可能导致错误
+    
     return output
+
 
 # 行动转表情
 def run_gpt_prompt_pronunciatio(Action_dec):
